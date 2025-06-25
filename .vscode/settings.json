@@ -1,0 +1,4 @@
+{
+    "interactive-git-log.prOnPush": true,
+    "interactive-git-log.commitNoVerify": true
+}

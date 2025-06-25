@@ -2,7 +2,7 @@
 // Book struct lifetime-annotated
 struct Book<'a> {
     title: &'a str,
-    // author: &'a str,
+    author: &'a str,
     excerpt: &'a str,
 }
 

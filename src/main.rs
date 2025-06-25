@@ -7,7 +7,7 @@ struct Book<'a> {
 }
 
 // 20250625 1803 CET SDvW If you keep it like this, most of the cases it must fit.
-// DateDPE seems to work for this work too.
+// DateDPE seems to work for this.
 impl<'a> Book<'a> {
     // Constructor method
     fn new(title: &'a str, author: &'a str, excerpt: &'a str) -> Self {

@@ -7,4 +7,4 @@ Messed up stuff again. Next experiment. Getting there ...
 Somehow I can not get git add . indeed add the whole Rust project. 
 But I can not figure out why. 
 So that's why I altered the README.md file again with this message.
-Branch is okay. 
+Git Branch is okay. 

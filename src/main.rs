@@ -1,42 +1,72 @@
-// Define a Book struct with a lifetime-annotated reference
-// Book struct lifetime-annotated
-struct Book<'a> {
-    title: &'a str,
-    author: &'a str,
-    excerpt: &'a str,
+#[derive(Debug)]
+struct Person<'a> {
+    name: &'a str,
+    age: u8,
 }
 
-// 20250625 1803 CET SDvW If you keep it like this, most of the cases it must fit.
-// DateDPE seems to work for this.
-impl<'a> Book<'a> {
-    // Constructor method
-    fn new(title: &'a str, author: &'a str, excerpt: &'a str) -> Self {
-        Book { title, author, excerpt }
-    }
-    
-    // Method that returns a reference tied to the same lifetime
-    fn get_title(&self) -> &'a str {
-        self.title
-    }
+// A unit struct
+struct Nil;
+
+// A tuple struct
+struct Pair(i32, f32);
+
+// A struct with two fields
+struct Point {
+    x: f32,
+    y: f32,
+}
+
+// Structs can be reused as fields of another struct
+#[allow(dead_code)]
+struct Rectangle {
+    p1: Point,
+    p2: Point,
 }
 
 fn main() {
-    // The owned strings must live longer than the Book
-    let title = String::from("The Rust Programming Language");
-    let author = String::from("Steve Klabnik and Carol Nichols");
-    let excerpt = String::from("Welcome to The Rust Programming Language...");
-    
-    // Create a book with references to our strings
-    let book = Book::new(&title, &author, &excerpt);
-    
-    println!(
-        "Book: '{}' by {}\nExcerpt: {}",
-        book.get_title(),
-        book.author,
-        book.excerpt
-    );
-    
-    // All references remain valid because:
-    // 1. The strings (title, author, excerpt) live until the end of main()
-    // 2. The Book's references don't outlive their source data
+    // Create struct with field init shorthand
+    let name = "Peter";
+    let age = 27;
+    let peter = Person { name, age };
+
+    // Print debug struct
+    println!("{:?}", peter);
+
+
+    // Instantiate a `Point`
+    let point: Point = Point { x: 0.3, y: 0.4 };
+
+    // Access the fields of the point
+    println!("point coordinates: ({}, {})", point.x, point.y);
+
+    // Make a new point by using struct update syntax to use the fields of our other one
+    let new_point = Point { x: 0.1, ..point };
+    // `new_point.y` will be the same as `point.y` because we used that field from `point`
+    println!("second point: ({}, {})", new_point.x, new_point.y);
+
+    // Destructure the point using a `let` binding
+    let Point { x: my_x, y: my_y } = point;
+
+    let _rectangle = Rectangle {
+        // struct instantiation is an expression too
+        p1: Point { x: my_y, y: my_x },
+        p2: point,
+    };
+
+    // Instantiate a unit struct
+    let _nil = Nil;
+
+    // Instantiate a tuple struct
+    let pair = Pair(1, 0.1);
+
+    // Access the fields of a tuple struct
+    println!("pair contains {:?} and {:?}", pair.0, pair.1);
+
+    // Destructure a tuple struct
+    let Pair(integer, decimal) = pair;
+
+    println!("pair contains {:?} and {:?}", integer, decimal);
+    dbg!(peter.name, peter.age);
+    // The `dbg!` macro prints the value and returns ownership of the values.
+    // It is useful for debugging purposes.
 }

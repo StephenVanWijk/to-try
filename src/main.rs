@@ -1,42 +1,49 @@
-// Define a Book struct with a lifetime-annotated reference
-// Book struct lifetime-annotated
-struct Book<'a> {
-    title: &'a str,
-    author: &'a str,
-    excerpt: &'a str,
+// An attribute to hide warnings for unused code.
+#![allow(dead_code)]
+
+// Create an `enum` to classify a web event. Note how both
+// names and type information together specify the variant:
+// `PageLoad != PageUnload` and `KeyPress(char) != Paste(String)`.
+// Each is different and independent.
+enum WebEvent {
+    // An `enum` may either be `unit-like`,
+    PageLoad,
+    PageUnload,
+    // like tuple structs,
+    KeyPress(char),
+    Paste(String),
+    // or like structures.
+    Click { x: i64, y: i64 },
+    // Als ik het hier nou toevoeg?
 }
 
-// 20250625 1803 CET SDvW If you keep it like this, most of the cases it must fit.
-// DateDPE seems to work for this.
-impl<'a> Book<'a> {
-    // Constructor method
-    fn new(title: &'a str, author: &'a str, excerpt: &'a str) -> Self {
-        Book { title, author, excerpt }
-    }
-    
-    // Method that returns a reference tied to the same lifetime
-    fn get_title(&self) -> &'a str {
-        self.title
+// A function which takes a `WebEvent` enum as an argument and
+// returns nothing.
+fn inspect(event: WebEvent) {
+    match event {
+        WebEvent::PageLoad => println!("page loaded"),
+        WebEvent::PageUnload => println!("page unloaded"),
+        // Destructure `c` from inside the `enum`.
+        WebEvent::KeyPress(c) => println!("pressed '{}'.", c),
+        WebEvent::Paste(s) => println!("pasted \"{}\".", s),
+        // Destructure `Click` into `x` and `y`.
+        WebEvent::Click { x, y } => {
+            println!("clicked at x={}, y={}.", x, y);
+        },
     }
 }
 
 fn main() {
-    // The owned strings must live longer than the Book
-    let title = String::from("The Rust Programming Language");
-    let author = String::from("Steve Klabnik and Carol Nichols");
-    let excerpt = String::from("Welcome to The Rust Programming Language...");
-    
-    // Create a book with references to our strings
-    let book = Book::new(&title, &author, &excerpt);
-    
-    println!(
-        "Book: '{}' by {}\nExcerpt: {}",
-        book.get_title(),
-        book.author,
-        book.excerpt
-    );
-    
-    // All references remain valid because:
-    // 1. The strings (title, author, excerpt) live until the end of main()
-    // 2. The Book's references don't outlive their source data
+    let pressed = WebEvent::KeyPress('x');
+    // `to_owned()` creates an owned `String` from a string slice.
+    let pasted  = WebEvent::Paste("my text".to_owned());
+    let click   = WebEvent::Click { x: 20, y: 80 };
+    let load    = WebEvent::PageLoad;
+    let unload  = WebEvent::PageUnload;
+
+    inspect(pressed);
+    inspect(pasted);
+    inspect(click);
+    inspect(load);
+    inspect(unload);
 }
